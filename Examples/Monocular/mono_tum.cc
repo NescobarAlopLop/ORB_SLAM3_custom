@@ -138,7 +138,6 @@ void LoadImages(const string &strImagePath, const string &strPathTimes,
 		{
 			stringstream ss;
 			ss << s;
-//			vstrImages.push_back(strImagePath + "/" + ss.str() + ".png");
 			vstrImages.push_back(ss.str() + ".png");
 			double t;
 			ss >> t;
