@@ -29,22 +29,21 @@
 
 using namespace std;
 
-void LoadImages(const string &strFile, vector<string> &vstrImageFilenames,
-                vector<double> &vTimestamps);
+void LoadImages(const string &strImagePath, const string &strPathTimes,
+	vector<string> &vstrImages, vector<double> &vTimeStamps);
 
 int main(int argc, char **argv)
 {
-    if(argc != 4)
+    if(argc != 5)
     {
-        cerr << endl << "Usage: ./mono_tum path_to_vocabulary path_to_settings path_to_sequence" << endl;
-        return 1;
+        cerr << endl << "Usage: ./mono_tum path_to_vocabulary path_to_settings path_to_sequence path_to_times_file" << endl;
+		return 1;
     }
 
     // Retrieve paths to images
     vector<string> vstrImageFilenames;
     vector<double> vTimestamps;
-    string strFile = string(argv[3])+"/rgb.txt";
-    LoadImages(strFile, vstrImageFilenames, vTimestamps);
+	LoadImages(string(argv[3]), string(argv[4]), vstrImageFilenames, vTimestamps);
 
     int nImages = vstrImageFilenames.size();
 
@@ -64,7 +63,7 @@ int main(int argc, char **argv)
     for(int ni=0; ni<nImages; ni++)
     {
         // Read image from file
-        im = cv::imread(string(argv[3])+"/"+vstrImageFilenames[ni],cv::IMREAD_UNCHANGED);
+        im = cv::imread(string(argv[3])+"/"+vstrImageFilenames[ni],cv::IMREAD_GRAYSCALE);
         double tframe = vTimestamps[ni];
 
         if(im.empty())
@@ -124,31 +123,26 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void LoadImages(const string &strFile, vector<string> &vstrImageFilenames, vector<double> &vTimestamps)
+void LoadImages(const string &strImagePath, const string &strPathTimes,
+	vector<string> &vstrImages, vector<double> &vTimeStamps)
 {
-    ifstream f;
-    f.open(strFile.c_str());
-
-    // skip first three lines
-    string s0;
-    getline(f,s0);
-    getline(f,s0);
-    getline(f,s0);
-
-    while(!f.eof())
-    {
-        string s;
-        getline(f,s);
-        if(!s.empty())
-        {
-            stringstream ss;
-            ss << s;
-            double t;
-            string sRGB;
-            ss >> t;
-            vTimestamps.push_back(t);
-            ss >> sRGB;
-            vstrImageFilenames.push_back(sRGB);
-        }
-    }
+	ifstream fTimes;
+	fTimes.open(strPathTimes.c_str());
+	vTimeStamps.reserve(5000);
+	vstrImages.reserve(5000);
+	while(!fTimes.eof())
+	{
+		string s;
+		getline(fTimes,s);
+		if(!s.empty())
+		{
+			stringstream ss;
+			ss << s;
+//			vstrImages.push_back(strImagePath + "/" + ss.str() + ".png");
+			vstrImages.push_back(ss.str() + ".png");
+			double t;
+			ss >> t;
+			vTimeStamps.push_back(t/1e9);
+		}
+	}
 }
