@@ -219,5 +219,3 @@ void LoadImages(const string &strImagePath, const string &strPathTimes,
         }
     }
 }
-
-
