@@ -1,7 +1,7 @@
-
 #include <vector>
 #include "PnPProblem.h"
 #include <opencv2/calib3d/calib3d.hpp>
+
 // Custom constructor given the intrinsic camera parameters
 PnPProblem::PnPProblem(const double params[])
 {
@@ -14,7 +14,6 @@ PnPProblem::PnPProblem(const double params[])
 	R_matrix_ = cv::Mat::zeros(3, 3, CV_64FC1);   // rotation matrix
 	t_matrix_ = cv::Mat::zeros(3, 1, CV_64FC1);   // translation matrix
 	P_matrix_ = cv::Mat::zeros(3, 4, CV_64FC1);   // rotation-translation matrix
-
 }
 
 PnPProblem::~PnPProblem() = default;
@@ -37,7 +36,6 @@ void PnPProblem::set_P_matrix(const cv::Mat& R_matrix, const cv::Mat& t_matrix)
 }
 
 // Estimate the pose given a list of 2D/3D correspondences with RANSAC and the method to use
-
 void PnPProblem::estimatePoseRANSAC(const std::vector<cv::Point3f>& list_points3d, // list with model 3D coordinates
 	const std::vector<cv::Point2f>& list_points2d,     // list with scene 2D coordinates
 	int flags, cv::Mat& inliers, int iterationsCount,  // PnP method; inliers container
@@ -58,5 +56,4 @@ void PnPProblem::estimatePoseRANSAC(const std::vector<cv::Point3f>& list_points3
 	t_matrix_ = tvec;           // set translation matrix
 
 	this->set_P_matrix(R_matrix_, t_matrix_); // set rotation-translation matrix
-
 }
